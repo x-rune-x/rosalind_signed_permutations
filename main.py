@@ -4,15 +4,25 @@ from copy import copy
 def get_signed_permutations(perm_list):
     total_signed_permutations = []
     for perm in perm_list:
-        total_signed_permutations.append(perm)
-        for i in range(len(perm)):
-            partial_signed_perm = perm[:]
-            current_signed_perm = partial_signed_perm[:]
-            for j in range(i, len(perm)):
-                current_signed_perm[j] = -perm[j]
-                total_signed_permutations.append(copy(current_signed_perm))
+        for signed_comb in get_signed_combinations(perm, signed_combinations=[]):
+            total_signed_permutations.append(signed_comb)
 
     return total_signed_permutations
+
+
+def get_signed_combinations(input_list, start_index=0, signed_combinations=[]):
+    signed_combinations.append(input_list)
+
+    for i in range(start_index, len(input_list)):
+        combination = copy(input_list)
+        combination[i] = -combination[i]
+
+        if i is len(input_list) - 1:
+            signed_combinations.append(combination)
+        else:
+            get_signed_combinations(combination, start_index=i+1, signed_combinations=signed_combinations)
+
+    return signed_combinations
 
 
 def get_permutations_of_integer(integer):
@@ -38,19 +48,15 @@ def get_permutations(int_list):
     return perm_list
 
 
-def output_to_file(signed_permutations, file_path):
+def output_to_file(results, file_path):
     with open(file_path, 'w') as reader:
-        reader.write(str(len(signed_permutations)) + '\n')
-        for permutation in signed_permutations:
+        reader.write(str(len(results)) + '\n')
+        for permutation in results:
             reader.writelines(' '.join(map(str, permutation)))
             reader.write('\n')
 
 
-permutations = get_permutations_of_integer(3)
-print(permutations)
+permutations = get_permutations_of_integer(5)
 signed_permutations = get_signed_permutations(permutations)
 print(signed_permutations)
 print(len(signed_permutations))
-
-#output_to_file(signed_permutations,
-#               'C:\\Users\\masterofdoom\\code projects\\PycharmProjects\\signed-permutations\\results.text')
